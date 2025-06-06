@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide to HLP Machines</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #23313e 0%, #2c3e50 100%);
+        min-height: 100vh;
+        color: #ecf0f1;
+        overflow-x: hidden;
+    }
+
+    
+    #loginBackgroundSlideshow {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden;
+    }
+    .slide {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-size: cover; background-position: center center;
+        opacity: 0; animation: fadeSlide 49s infinite;
+    }
+    .slide:nth-child(1) { background-image: url('bg1.jpg'); animation-delay: 0s; }
+    .slide:nth-child(2) { background-image: url('bg2.jpg'); animation-delay: 7s; }
+    .slide:nth-child(3) { background-image: url('bg3.jpg'); animation-delay: 14s; }
+    .slide:nth-child(4) { background-image: url('bg4.jpg'); animation-delay: 21s; }
+    .slide:nth-child(5) { background-image: url('bg5.jpg'); animation-delay: 28s; }
+    .slide:nth-child(6) { background-image: url('bg6.jpg'); animation-delay: 35s; }
+    .slide:nth-child(7) { background-image: url('bg7.jpg'); animation-delay: 42s; }
+
+    @keyframes fadeSlide {
+        0% { opacity: 0; transform: scale(1.05) rotate(0.5deg); }
+        10% { opacity: 1; transform: scale(1) rotate(0deg); }
+        14.28% { opacity: 1; transform: scale(1) rotate(0deg); }
+        24.28% { opacity: 0; transform: scale(1.05) rotate(-0.5deg); }
+        25% { opacity: 0; } 100% { opacity: 0; }
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .login-container, .main-container, .manager-panel-container {
+        background: rgba(52, 73, 94, 0.88); border-radius: 15px; padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3); backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.1); position: relative; z-index: 1;
+    }
+    .login-container { max-width: 450px; margin: 100px auto; text-align: center; }
+    .logo img { max-width: 200px; height: auto; margin-bottom: 15px; }
+    
+    .form-group { margin-bottom: 20px; text-align: left; }
+    .form-group label { display: block; margin-bottom: 5px; color: #bdc3c7; font-weight: 500; }
+    .form-group input, .form-group select, .form-group textarea {
+        width: 100%; padding: 12px; border: 1px solid #34495e; border-radius: 8px;
+        background: rgba(44, 62, 80, 0.8); color: #ecf0f1; font-size: 14px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        outline: none; border-color: #3498db; box-shadow: 0 0 10px rgba(52,152,219,0.3);
+    }
+    .form-group input[readonly] {
+        background: rgba(44, 62, 80, 0.5);
+        cursor: not-allowed;
+    }
+
+
+    .btn {
+        background: linear-gradient(45deg, #3498db, #2980b9); color: white; padding: 10px 20px;
+        border: none; border-radius: 8px; cursor: pointer; font-size: 15px;
+        font-weight: 500; transition: all 0.3s ease; margin: 5px; text-decoration: none; display: inline-block;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(52,152,219,0.4); }
+    .btn-secondary { background: linear-gradient(45deg, #95a5a6, #7f8c8d); }
+    .btn-danger { background: linear-gradient(45deg, #e74c3c, #c0392b); }
+    .btn-success { background: linear-gradient(45deg, #27ae60, #229954); }
+    .btn-info { background: linear-gradient(45deg, #5dade2, #2e86c1); }
+
+
+    .header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .user-role {
+        padding: 5px 12px; border-radius: 20px; font-size: 12px;
+        border: 1px solid;
+    }
+
+    .search-section { margin-bottom: 30px; }
+    .search-box {
+        display: flex; 
+        gap: 10px; 
+        margin-bottom: 20px; 
+        align-items: center; 
+    }
+    .search-box input[type="text"],
+    .search-box select {
+        flex: 1;
+        padding: 15px;      /* Increased padding */
+        font-size: 16px;    /* Increased font size */
+    }
+    .search-box .btn {
+        padding: 15px 22px; /* Adjusted padding for buttons */
+        font-size: 16px;    /* Match font size */
+    }
+
+    @media (max-width: 768px) {
+        .search-box {
+            flex-direction: column; 
+            align-items: stretch;   
+            gap: 15px;              
+        }
+        .search-box select,
+        .search-box .btn {
+            max-width: none; 
+            width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+        }
+    }
+
+
+    .engine-grid {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; margin-top: 20px;
+    }
+    .engine-card {
+        background: rgba(44,62,80,0.8); border-radius: 12px; padding: 20px;
+        border: 1px solid rgba(255,255,255,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .engine-card-clickable-area { cursor: pointer; }
+    .engine-card:hover {
+        transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    }
+    .engine-id { font-size: 1.4em; font-weight: bold; color: #3498db; margin-bottom: 10px; }
+    .engine-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+    .info-item { background: rgba(52,73,94,0.5); padding: 8px; border-radius: 5px; font-size: 13px; word-wrap: break-word; }
+    .info-label { color: #bdc3c7; font-weight: 500; }
+    .info-value { color: #ecf0f1; margin-top: 2px; }
+    
+    .engine-description-area {
+        background: rgba(52, 73, 94, 0.7);
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        text-align: left;
+        font-size: 14px;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .engine-card-actions { margin-top: 15px; text-align: right; display: flex; gap: 10px; justify-content: flex-end; }
+    .engine-card-actions .btn { padding: 8px 15px; font-size: 13px; }
+
+    .admin-form fieldset {
+        border: 1px solid rgba(52,152,219,0.4);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .admin-form legend {
+        color: #3498db;
+        font-weight: bold;
+        padding: 0 10px;
+        margin-left: 10px;
+        font-size: 1.1em;
+    }
+    .form-row {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap: 15px; margin-bottom: 15px;
+    }
+    .form-row .form-group { margin-bottom: 0; }
+    .form-row-single { grid-column: 1 / -1; }
+
+    .hidden { display: none !important; }
+    #loginBackgroundSlideshow.hidden { display: none !important; }
+
+    .no-results { text-align: center; color: #7f8c8d; font-size: 18px; margin-top: 50px; padding: 20px;}
+    .stats-section {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 20px; margin-bottom: 30px;
+    }
+    .stat-card {
+        background: rgba(52,152,219,0.2); padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #3498db;
+    }
+    .stat-number { font-size: 2em; font-weight: bold; color: #3498db; }
+    .stat-label { color: #bdc3c7; margin-top: 5px; }
+    
+    .modal {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85);
+        display: flex; align-items: center; justify-content: center; z-index: 1000;
+    }
+    .modal.hidden { display: none !important; }
+    .modal-content {
+        background: #2c3e50; padding: 30px; border-radius: 15px; max-width: 700px; width: 90%;
+        max-height: 85vh; overflow-y: auto;
+    }
+    .modal-content .info-item { margin-bottom: 5px;}
+
+    #credentialUpdateStatus { margin-top: 15px; font-weight: 500; }
+
+    .fieldset-green { border-color: #27ae60 !important; }
+    .fieldset-green > legend { color: #27ae60 !important; }
+    .fieldset-orange { border-color: #f39c12 !important; }
+    .fieldset-orange > legend { color: #f39c12 !important; }
+    .fieldset-blue { border-color: #3498db !important; }
+    .fieldset-blue > legend { color: #3498db !important; }
+    .fieldset-purple { border-color: #8e44ad !important; }
+    .fieldset-purple > legend { color: #8e44ad !important; }
+    .fieldset-red { border-color: #e74c3c !important; }
+    .fieldset-red > legend { color: #e74c3c !important; }
+.login-container {
+    /* A subtle gradient gives the feeling of light on the glass */
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    
+    /* This creates the "frosted glass" effect by blurring what's behind it */
+    backdrop-filter: blur(10px);
+    
+    /* A slightly larger radius for softer, more "glass-like" corners */
+    border-radius: 20px;
+    
+    /* A very fine border helps to catch the light and define the edge */
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    
+    /* A shadow gives the panel depth and makes it feel like it's floating */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+</style>
+</head>
+<body>
+
+<div id="loginBackgroundSlideshow">
+    <div class="slide"></div><div class="slide"></div><div class="slide"></div><div class="slide"></div><div class="slide"></div><div class="slide"></div><div class="slide"></div>
+</div>
+
+<div id="loginScreen" class="login-container">
+    <div class="logo"><img src="arab_potash_logo.png" alt="Guide to HLP Machines Logo"></div>
+    <h2>Guide to HLP Machines</h2>
+    <p style="margin-bottom: 30px; color: #7f8c8d;">Factory Management Portal</p>
+    <div class="form-group"><label for="username">Username</label><input type="text" id="username" placeholder="Enter username"></div>
+    <div class="form-group"><label for="password">Password</label><input type="password" id="password" placeholder="Enter password"></div>
+    <button class="btn" onclick="login()">Login</button>
+    <div id="loginError" style="color: #e74c3c; margin-top: 15px; display: none;">Invalid credentials.</div>
+</div>
+
+<div id="mainApp" class="container hidden">
+    <div class="main-container">
+        <div class="header">
+            <h1>🏭 Guide to HLP Machines</h1>
+            <div class="user-info">
+                <div class="user-role" id="userRole">User</div>
+                <span id="currentUser"></span>
+                <button id="userManagementBtn" class="btn btn-secondary hidden" onclick="toggleManagerPanel()">User Management</button>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div id="managerControlPanel" class="manager-panel-container hidden">
+            <h3>User Account Management</h3>
+            <fieldset>
+                <legend>User Credentials</legend>
+                <div class="form-row">
+                    <div class="form-group"><label for="manageUserUsername">Username</label><input type="text" id="manageUserUsername" placeholder="Enter username for User"></div>
+                    <div class="form-group"><label for="manageUserPassword">New Password</label><input type="password" id="manageUserPassword" placeholder="Enter new password for User"></div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>Administrator Credentials</legend>
+                <div class="form-row">
+                    <div class="form-group"><label for="manageAdminUsername">Username</label><input type="text" id="manageAdminUsername" placeholder="Enter username for Admin"></div>
+                    <div class="form-group"><label for="manageAdminPassword">New Password</label><input type="password" id="manageAdminPassword" placeholder="Enter new password for Admin"></div>
+                </div>
+            </fieldset>
+            <button class="btn btn-success" onclick="saveManagedCredentials()">Save Credential Changes</button>
+            <div id="credentialUpdateStatus"></div>
+        </div>
+
+        <div id="statsSection" class="stats-section hidden">
+            <div class="stat-card"><div class="stat-number" id="totalEngines">0</div><div class="stat-label">Total Machines</div></div>
+            <div class="stat-card"><div class="stat-number" id="activeEngines">0</div><div class="stat-label">Active Machines</div></div>
+            <div class="stat-card"><div class="stat-number" id="maintenanceEngines">0</div><div class="stat-label">Maintenance Machines</div></div>
+        </div>
+        
+        <div id="adminSection" class="hidden">
+            <div class="admin-form">
+                <h3 style="margin-bottom: 20px; color: #3498db;">Equipment Information</h3>
+
+                <fieldset class="fieldset-green"><legend>General & MCC Data</legend><div class="form-row"><div class="form-group"><label for="motorTagNo">Motor Tag No. * (System Unique ID)</label><input type="text" id="motorTagNo" placeholder="Enter Motor Tag No."></div><div class="form-group"><label for="equipmentDescription">Equipment Description</label><input type="text" id="equipmentDescription" placeholder="Enter Equipment Description"></div></div><div class="form-row"><div class="form-group form-row-single"><label for="hlpFeedbackNote">HLP Feedback / Note</label><textarea id="hlpFeedbackNote" rows="2" placeholder="Enter HLP Feedback / Note"></textarea></div></div><div class="form-row"><div class="form-group"><label for="swrNo">SWR No.</label><input type="text" id="swrNo" placeholder="Enter SWR No."></div><div class="form-group"><label for="mcc">MCC</label><input type="text" id="mcc" placeholder="Enter MCC"></div></div><div class="form-row"><div class="form-group"><label for="mccLocation">MCC Location</label><input type="text" id="mccLocation" placeholder="Enter MCC Location"></div><div class="form-group"><label for="mccTypical">MCC Typical</label><input type="text" id="mccTypical" placeholder="Enter MCC Typical"></div></div><div class="form-row"><div class="form-group"><label for="profibusAddress">Profibus Address</label><input type="text" id="profibusAddress" placeholder="Enter Profibus Address"></div><div class="form-group"><label for="runningApplication">RUNNING APPLICATION</label><input type="text" id="runningApplication" placeholder="Enter Running Application"></div></div><div class="form-row"><div class="form-group"><label for="powerKw">Power KW</label><input type="number" step="0.01" id="powerKw" placeholder="e.g., 7.5"></div><div class="form-group"><label for="currentAmp">Current AMP</label><input type="number" step="0.01" id="currentAmp" placeholder="e.g., 15.2"></div></div><div class="form-row"><div class="form-group"><label for="systemCabinet">System Cabinet</label><input type="text" id="systemCabinet" placeholder="Enter System Cabinet"></div><div class="form-group"><label for="segmentNo">Segment No.</label><input type="text" id="segmentNo" placeholder="Enter Segment No."></div></div><div class="form-row"><div class="form-group"><label for="redundantNo">Redundant no.</label><input type="text" id="redundantNo" placeholder="Enter Redundant no."></div><div class="form-group"><label for="voltage">Voltage</label><input type="text" id="voltage" placeholder="e.g., 400V"></div></div><div class="form-row"><div class="form-group"><label for="powerCable">POWER CABLE</label><input type="text" id="powerCable" placeholder="Enter Power Cable spec"></div><div class="form-group"><label for="fieldControlCable">FIELD CONTROL CABLE</label><input type="text" id="fieldControlCable" placeholder="Enter Field Control Cable spec"></div></div><div class="form-row"><div class="form-group"><label for="rtdCable">RTD CABLE</label><input type="text" id="rtdCable" placeholder="Enter RTD Cable spec"></div><div class="form-group"><label for="heaterCable">HEATER CABLE</label><input type="text" id="heaterCable" placeholder="Enter Heater Cable spec"></div></div><div class="form-row"><div class="form-group"><label for="estimatedLength">Estimated length</label><input type="text" id="estimatedLength" placeholder="e.g., 50m"></div><div class="form-group"><label for="ctRatio">CT RATIO</label><input type="text" id="ctRatio" placeholder="Enter CT Ratio"></div></div><div class="form-row"><div class="form-group form-row-single"><label for="hhmFusesSiba">HHM-FUSES SIBA</label><input type="text" id="hhmFusesSiba" placeholder="Enter HHM-Fuses Siba details"></div></div></fieldset>
+                <fieldset class="fieldset-orange"><legend>Motor Nameplate & Specifications</legend><div class="form-row"><div class="form-group"><label for="type">TYPE</label><input type="text" id="type" placeholder="Enter Type"></div><div class="form-group"><label for="frame">FRAME</label><input type="text" id="frame" placeholder="Enter Frame"></div></div><div class="form-row"><div class="form-group"><label for="fla">FLA</label><input type="text" id="fla" placeholder="Enter FLA (e.g., 14.8A)"></div><div class="form-group"><label for="rpm">RPM</label><input type="number" id="rpm" placeholder="e.g., 1450"></div></div><div class="form-row"><div class="form-group"><label for="hpKw">HP/KW</label><input type="text" id="hpKw" placeholder="e.g., 10HP/7.5KW"></div><div class="form-group"><label for="manfc">MANFC</label><input type="text" id="manfc" placeholder="Enter Manufacturer"></div></div><div class="form-row"><div class="form-group"><label for="volts">VOLTS</label><input type="text" id="volts" placeholder="e.g., 380-415V"></div><div class="form-group"><label for="couplingType">COUPLING TYPE</label><input type="text" id="couplingType" placeholder="Enter Coupling Type"></div></div><div class="form-row"><div class="form-group"><label for="mountingType">MOUNTING TYPE</label><input type="text" id="mountingType" placeholder="Enter Mounting Type"></div><div class="form-group"><label for="jBoxSide">J.BOX SIDE</label><input type="text" id="jBoxSide" placeholder="e.g., Left"></div></div><div class="form-row"><div class="form-group"><label for="deBearing">DE-BEARING</label><input type="text" id="deBearing" placeholder="Enter DE-Bearing info"></div><div class="form-group"><label for="ndeBearing">NDE-BEARING</label><input type="text" id="ndeBearing" placeholder="Enter NDE-Bearing info"></div></div><div class="form-row"><div class="form-group form-row-single"><label for="note">NOTE</label><textarea id="note" rows="2" placeholder="Enter Note"></textarea></div></div></fieldset>
+                <fieldset class="fieldset-blue"><legend>Replacement History</legend><div class="form-row"><div class="form-group"><label for="replaceTime1">Replace Time 1</label><input type="date" id="replaceTime1"></div><div class="form-group"><label for="replaceTime2">Replace Time 2</label><input type="date" id="replaceTime2"></div></div><div class="form-row"><div class="form-group"><label for="replaceTime3">Replace Time 3</label><input type="date" id="replaceTime3"></div><div class="form-group"><label for="replaceTime4">Replace Time 4</label><input type="date" id="replaceTime4"></div></div><div class="form-row"><div class="form-group"><label for="replaceTime5">Replace Time 5</label><input type="date" id="replaceTime5"></div></div></fieldset>
+                <fieldset class="fieldset-purple"><legend>Warehouse & Asset Information</legend><div class="form-row"><div class="form-group"><label for="warehouseMotNo">Warehouse MOT. NO.</label><input type="text" id="warehouseMotNo" placeholder="Enter Warehouse MOT. NO."></div><div class="form-group"><label for="apcErpAssetNo">APC ERP ASSET No.</label><input type="text" id="apcErpAssetNo" placeholder="Enter APC ERP ASSET No."></div></div></fieldset>
+                <fieldset class="fieldset-red"><legend>Status & Additional Notes</legend><div class="form-row"><div class="form-group"><label for="status">Status</label><select id="status"><option value="Active">Active</option><option value="Maintenance">Maintenance</option><option value="Inactive">Inactive</option></select></div></div><div class="form-row"><div class="form-group form-row-single"><label for="generalAdditionalNotes">General Additional Notes</label><textarea id="generalAdditionalNotes" rows="3" placeholder="Any other general information"></textarea></div></div></fieldset>
+                <fieldset><legend>Batch Import from CSV</legend><div class="form-group"><label for="csvFileInput">Upload CSV File</label><input type="file" id="csvFileInput" accept=".csv" style="padding: 10px; background: rgba(44, 62, 80, 0.8); border: 1px solid #34495e; border-radius: 8px; color: #ecf0f1; width:100%;"><small style="color: #bdc3c7; display: block; margin-top: 5px;">Ensure CSV columns are in the same order as the form fields. The first row should be headers.</small></div><button class="btn btn-info" onclick="handleCsvImport()">Import Machines from CSV</button><div id="importStatus" style="margin-top: 10px; color: #ecf0f1;"></div></fieldset>
+                <div style="margin-top: 20px; margin-bottom: 20px; padding: 15px; border: 1px solid #c0392b; border-radius: 8px; background-color: rgba(192, 57, 43, 0.1);"><h4 style="color: #e74c3c; margin-bottom: 10px;">Danger Zone</h4><button class="btn btn-danger" onclick="promptDeleteAllData()">Delete All Machine Data</button><small style="color: #bdc3c7; display: block; margin-top: 5px;">Warning: This will permanently delete all machine records from the database. This action cannot be undone.</small></div>
+                
+                <button class="btn btn-success" id="addOrUpdateEngineBtn" onclick="handleFormSubmit()">Add Machine Data</button>
+                <button class="btn btn-secondary" onclick="clearForm()">Clear Form</button>
+            </div>
+        </div>
+
+        <div class="search-section">
+            <h3 style="margin-bottom: 15px;">Search Machines</h3>
+            <div class="search-box">
+                <select id="searchField" onchange="searchEngines()"></select>
+                <input type="text" id="searchInput" placeholder="Enter search term..." onkeyup="searchEngines()">
+                <button class="btn" onclick="searchEngines()">Search</button>
+                <button class="btn btn-secondary" onclick="showAllEngines()">Show All</button>
+            </div>
+        </div>
+        <div id="engineResults">
+            <div id="noResults" class="no-results">Enter search terms to find machines.</div>
+            <div id="engineGrid" class="engine-grid"></div>
+        </div>
+    </div>
+</div>
+<div id="engineModal" class="modal hidden">
+    <div class="modal-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 id="modalTitle">Machine Details</h3>
+        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+        </div>
+        <div id="modalContent" style="display: grid; gap: 10px;"></div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+    import {
+        getFirestore, collection, doc, setDoc, getDocs, deleteDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // --- Start of Script Scope ---
+
+    function mobileLog(message) {
+        console.log("MOBILE DEBUG:", message);
+    }
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCGfxeiBzsJC3mvp5OQokdayGTMvQm79m0", // Replace with your actual API key
+        authDomain: "motor-inventory-77e1f.firebaseapp.com",
+        projectId: "motor-inventory-77e1f",
+        storageBucket: "motor-inventory-77e1f.appspot.com",
+        messagingSenderId: "896639039816",
+        appId: "1:896639039816:web:0c080c5cb6146f309e9b7d",
+        measurementId: "G-ZEEE17JMH5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    try { getAnalytics(app); } catch (e) { mobileLog("Analytics Error: " + e.message); }
+    const db = getFirestore(app);
+    const enginesCollectionRef = collection(db, "engines");
+    
+    let engines = [];
+    let currentUser = '';
+    let isAdmin = false;
+    let isManager = false;
+    let currentEditingDocId = null; 
+
+    let userLoginDetails = { username: 'HLP', password: 'HLP' };
+    let adminLoginDetails = { username: 'HLP', password: 'MCC' };
+    const managerLoginDetails = { username: 'Manager', password: '421056' };
+
+    const loginBackgroundSlideshow = document.getElementById('loginBackgroundSlideshow');
+    const userManagementBtn = document.getElementById('userManagementBtn');
+    const managerControlPanel = document.getElementById('managerControlPanel');
+    const loginError = document.getElementById('loginError');
+
+    const machineFields = [
+        { header: "Motor Tag No.", id: "motorTagNo", type: "text", isId: true },
+        { header: "Equipment Description", id: "equipmentDescription", type: "text" },
+        { header: "HLP Feedback / Note", id: "hlpFeedbackNote", type: "textarea" },
+        { header: "SWR No.", id: "swrNo", type: "text" },
+        { header: "MCC", id: "mcc", type: "text" },
+        { header: "MCC Location", id: "mccLocation", type: "text" },
+        { header: "MCC Typical", id: "mccTypical", type: "text" },
+        { header: "Profibus Address", id: "profibusAddress", type: "text" },
+        { header: "RUNNING APPLICATION", id: "runningApplication", type: "text" },
+        { header: "Power KW", id: "powerKw", type: "number" },
+        { header: "Current AMP", id: "currentAmp", type: "number" },
+        { header: "System Cabinet", id: "systemCabinet", type: "text" },
+        { header: "Segment No.", id: "segmentNo", type: "text" },
+        { header: "Redundant no.", id: "redundantNo", type: "text" },
+        { header: "Voltage", id: "voltage", type: "text" },
+        { header: "POWER CABLE", id: "powerCable", type: "text" },
+        { header: "FIELD CONTROL CABLE", id: "fieldControlCable", type: "text" },
+        { header: "RTD CABLE", id: "rtdCable", type: "text" },
+        { header: "HEATER CABLE", id: "heaterCable", type: "text" },
+        { header: "Estimated length", id: "estimatedLength", type: "text" },
+        { header: "CT RATIO", id: "ctRatio", type: "text" },
+        { header: "HHM-FUSES SIBA", id: "hhmFusesSiba", type: "text" },
+        { header: "TYPE", id: "type", type: "text" },
+        { header: "FRAME", id: "frame", type: "text" },
+        { header: "FLA", id: "fla", type: "text" },
+        { header: "RPM", id: "rpm", type: "number" },
+        { header: "HP/KW", id: "hpKw", type: "text" },
+        { header: "MANFC", id: "manfc", type: "text" },
+        { header: "VOLTS", id: "volts", type: "text" },
+        { header: "COUPLING TYPE", id: "couplingType", type: "text" },
+        { header: "MOUNTING TYPE", id: "mountingType", type: "text" },
+        { header: "J.BOX SIDE", id: "jBoxSide", type: "text" },
+        { header: "DE-BEARING", id: "deBearing", type: "text" },
+        { header: "NDE-BEARING", id: "ndeBearing", type: "text" },
+        { header: "NOTE", id: "note", type: "textarea" },
+        { header: "Replace Time 1", id: "replaceTime1", type: "date" },
+        { header: "Replace Time 2", id: "replaceTime2", type: "date" },
+        { header: "Replace Time 3", id: "replaceTime3", type: "date" },
+        { header: "Replace Time 4", id: "replaceTime4", type: "date" },
+        { header: "Replace Time 5", id: "replaceTime5", type: "date" },
+        { header: "Warehouse MOT. NO.", id: "warehouseMotNo", type: "text" },
+        { header: "APC ERP ASSET No.", id: "apcErpAssetNo", type: "text" },
+        { header: "Status", id: "status", type: "select" },
+        { header: "General Additional Notes", id: "generalAdditionalNotes", type: "textarea" }
+    ];
+
+    function sanitizeForFirestoreId(idString) {
+        if (!idString) return '';
+        return idString.replace(/\//g, '_'); 
+    }
+
+    async function loadEnginesFromFirestore() {
+        try {
+            const querySnapshot = await getDocs(enginesCollectionRef);
+            engines = querySnapshot.docs.map(docSnapshot => ({ 
+                ...docSnapshot.data(), 
+                firestoreDocId: docSnapshot.id 
+            }));
+        } catch (error) {
+            console.error("Error loading machines:", error); engines = [];
+            alert("Could not load machine data from Firestore. Check console.");
+        }
+        updateStatistics();
+        displayEngines(engines);
+    }
+
+    window.login = function() {
+        const usernameInput = document.getElementById('username').value;
+        const passwordInput = document.getElementById('password').value;
+        isAdmin = false; isManager = false;
+        if(loginError) loginError.style.display = 'none';
+        if (usernameInput === userLoginDetails.username && passwordInput === userLoginDetails.password) {
+            currentUser = userLoginDetails.username; showMainApp();
+        } else if (usernameInput === adminLoginDetails.username && passwordInput === adminLoginDetails.password) {
+            currentUser = `${adminLoginDetails.username} (Admin)`; isAdmin = true; showMainApp();
+        } else if (usernameInput === managerLoginDetails.username && passwordInput === managerLoginDetails.password) {
+            currentUser = `${managerLoginDetails.username} (Manager)`; isManager = true; showMainApp();
+        } else {
+            if(loginError) { loginError.textContent = 'Invalid credentials.'; loginError.style.display = 'block'; setTimeout(() => { loginError.style.display = 'none'; }, 3000); }
+        }
+    }
+
+    async function showMainApp() {
+        document.getElementById('loginScreen').classList.add('hidden');
+        if (loginBackgroundSlideshow) loginBackgroundSlideshow.classList.add('hidden');
+        document.getElementById('mainApp').classList.remove('hidden');
+        document.body.style.background = 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)';
+        updateUserInterface();
+        populateSearchFields();
+        await loadEnginesFromFirestore();
+    }
+
+    function updateUserInterface() {
+        const userRoleEl = document.getElementById('userRole');
+        const currentUserSpan = document.getElementById('currentUser');
+        const adminFormSection = document.getElementById('adminSection');
+        const statsSection = document.getElementById('statsSection');
+        if(currentUserSpan) currentUserSpan.textContent = currentUser;
+        if(managerControlPanel) managerControlPanel.classList.add('hidden');  
+        if(userManagementBtn) userManagementBtn.classList.add('hidden');
+        if(adminFormSection) adminFormSection.classList.add('hidden');  
+        if(statsSection) statsSection.classList.add('hidden');
+        let roleText = 'User', roleBg = 'rgba(52,152,219,0.2)', roleBorder = '#3498db';
+        if (isManager) {
+            roleText = 'Manager'; roleBg = 'rgba(142, 68, 173, 0.2)'; roleBorder = '#8e44ad';
+            if(statsSection) statsSection.classList.remove('hidden');  
+            if(userManagementBtn) userManagementBtn.classList.remove('hidden');
+        } else if (isAdmin) {
+            roleText = 'Administrator'; roleBg = 'rgba(231,76,60,0.2)';  roleBorder = '#e74c3c';
+            if(adminFormSection) adminFormSection.classList.remove('hidden');
+            if(statsSection) statsSection.classList.remove('hidden');
+        }
+        if(userRoleEl) { userRoleEl.textContent = roleText; userRoleEl.style.background = roleBg; userRoleEl.style.borderColor = roleBorder; }
+    }
+    
+    window.toggleManagerPanel = function() { 
+        if (!isManager) return;
+        managerControlPanel.classList.toggle('hidden');
+        if (!managerControlPanel.classList.contains('hidden')) {
+            document.getElementById('manageUserUsername').value = userLoginDetails.username;
+            document.getElementById('manageUserPassword').value = '';  
+            document.getElementById('manageAdminUsername').value = adminLoginDetails.username;
+            document.getElementById('manageAdminPassword').value = '';  
+            document.getElementById('credentialUpdateStatus').textContent = '';
+        }
+    }
+    window.saveManagedCredentials = function() { 
+        if (!isManager) return;
+        const newUserName = document.getElementById('manageUserUsername').value.trim();
+        const newUserPass = document.getElementById('manageUserPassword').value;
+        const newAdminName = document.getElementById('manageAdminUsername').value.trim();
+        const newAdminPass = document.getElementById('manageAdminPassword').value;
+        let updatesMade = false;
+
+        if (!newUserName || !newAdminName) {
+            alert("Usernames cannot be empty.");
+            return;
+        }
+
+        if (newUserName && newUserName !== userLoginDetails.username) {
+            userLoginDetails.username = newUserName;
+            updatesMade = true;
+        }
+        if (newUserPass) { 
+            userLoginDetails.password = newUserPass; 
+            updatesMade = true; 
+        }
+        if (newAdminName && newAdminName !== adminLoginDetails.username) {
+            adminLoginDetails.username = newAdminName;
+            updatesMade = true;
+        }
+        if (newAdminPass) { 
+            adminLoginDetails.password = newAdminPass; 
+            updatesMade = true; 
+        }
+
+        const statusDiv = document.getElementById('credentialUpdateStatus');
+        if (updatesMade) {
+            statusDiv.textContent = 'Credentials updated successfully for this session!';
+            statusDiv.style.color = '#27ae60';
+            document.getElementById('manageUserPassword').value = '';  
+            document.getElementById('manageAdminPassword').value = '';
+        } else {
+            statusDiv.textContent = 'No changes entered.';
+            statusDiv.style.color = '#f39c12';
+        }
+        setTimeout(() => { statusDiv.textContent = ''; }, 4000);
+    }
+
+    function updateStatistics() { 
+        const totalEnginesEl = document.getElementById('totalEngines');
+        const activeEnginesEl = document.getElementById('activeEngines');
+        const maintenanceEnginesEl = document.getElementById('maintenanceEngines');
+        if(totalEnginesEl) totalEnginesEl.textContent = engines.length;
+        if(activeEnginesEl) activeEnginesEl.textContent = engines.filter(e => e.status === 'Active').length;
+        if(maintenanceEnginesEl) maintenanceEnginesEl.textContent = engines.filter(e => e.status === 'Maintenance').length;
+    }
+    
+    function populateSearchFields() { 
+        const searchFieldSelect = document.getElementById('searchField');
+        searchFieldSelect.innerHTML = '<option value="all">All Fields</option>'; 
+        machineFields.forEach(field => {
+            if (field.type === 'text' || field.type === 'textarea' || field.id === 'status' || field.isId) {
+                 const option = document.createElement('option');
+                 option.value = field.id;
+                 option.textContent = field.header;
+                 searchFieldSelect.appendChild(option);
+            }
+        });
+    }
+
+    window.searchEngines = function() { 
+        const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+        const searchFieldKey = document.getElementById('searchField').value; 
+        if (searchTerm === '') { displayEngines(engines); return; }
+        const filteredEngines = engines.filter(engine => {
+            const checkField = (fieldValue) => fieldValue && String(fieldValue).toLowerCase().includes(searchTerm);
+            if (searchFieldKey === "all") {
+                return machineFields.some(field => checkField(engine[field.id]));
+            } else {
+                return Object.prototype.hasOwnProperty.call(engine, searchFieldKey) && checkField(engine[searchFieldKey]);
+            }
+        });
+        displayEngines(filteredEngines);
+    }
+    window.showAllEngines = function() { 
+        document.getElementById('searchInput').value = '';
+        document.getElementById('searchField').value = 'all';
+        displayEngines(engines);
+    }
+
+    function getStatusColor(status) { 
+         switch(status) { case 'Active': return '#27ae60'; case 'Maintenance': return '#f39c12'; case 'Inactive': return '#e74c3c'; default: return '#7f8c8d'; }
+    }
+    function formatModalItem(label, value) { 
+        if (value === undefined || value === null || String(value).trim() === '') return '';
+         if (label.toLowerCase() === 'status') {
+             return `<div class="info-item"><div class="info-label">${label}</div><div class="info-value" style="color: ${getStatusColor(value)}">${String(value)}</div></div>`;
+         }
+        return `<div class="info-item"><div class="info-label">${label}</div><div class="info-value">${String(value).replace(/\n/g, '<br>')}</div></div>`;
+    }
+
+    window.showEngineDetails = function(motorTagNo, firestoreDocId) {  
+        const engine = engines.find(e => e.firestoreDocId === firestoreDocId); 
+        if (!engine) { alert("Machine details not found."); return; }
+        document.getElementById('modalTitle').textContent = `Machine Details - ${engine.motorTagNo || engine.id}`;
+        const modalContent = document.getElementById('modalContent');
+        let contentHtml = '';
+        machineFields.forEach(field => { contentHtml += formatModalItem(field.header, engine[field.id]); });
+        modalContent.innerHTML = contentHtml;
+        document.getElementById('engineModal').classList.remove('hidden');
+    }
+    window.closeModal = function() { document.getElementById('engineModal').classList.add('hidden'); }
+
+    window.handleFormSubmit = async function() {
+        if (currentEditingDocId) {
+            await updateEngineData(currentEditingDocId);
+        } else {
+            await addNewEngine();
+        }
+    }
+
+    async function addNewEngine() {
+        if (!isAdmin) { alert('Access denied.'); return; }
+        const originalMotorTagNo = document.getElementById('motorTagNo').value.trim();
+        if (!originalMotorTagNo) { alert('Motor Tag No. is required.'); return; }
+        const sanitizedId = sanitizeForFirestoreId(originalMotorTagNo);
+        if (!sanitizedId) { alert('The provided Motor Tag No. is invalid after sanitization.'); return; }
+
+        if (engines.some(e => e.firestoreDocId === sanitizedId)) {
+            alert('A machine with this Motor Tag No. already exists.');
+            return;
+        }
+        const newMachineData = {};
+        machineFields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if(element){
+                const value = element.value.trim();
+                newMachineData[field.id] = (field.type === 'number') ? (parseFloat(value) || null) : value;
+            }
+        });
+        newMachineData.id = sanitizedId; 
+        newMachineData.motorTagNo = originalMotorTagNo;
+
+        try {
+            await setDoc(doc(db, "engines", sanitizedId), newMachineData);  
+            alert('Machine data added successfully!');
+            
+            const newEngineForUi = { ...newMachineData, firestoreDocId: sanitizedId };
+            engines.push(newEngineForUi);
+            updateStatistics();
+            displayEngines(engines);
+            
+            clearForm(); 
+            document.getElementById('searchInput').value = originalMotorTagNo;
+            searchEngines();
+        } catch (error) {
+            console.error("Error adding machine to Firestore: ", error);
+            alert('Error adding machine data. Check console.');
+        }
+    }
+
+    async function updateEngineData(docIdToUpdate) {
+        if (!isAdmin) { alert('Access denied.'); return; }
+        const updatedMachineData = {};
+        const originalMotorTagNoFromForm = document.getElementById('motorTagNo').value.trim();
+        machineFields.forEach(field => {
+            const element = document.getElementById(field.id);
+             if(element){
+                const value = element.value.trim();
+                updatedMachineData[field.id] = (field.type === 'number') ? (parseFloat(value) || null) : value;
+            }
+        });
+        updatedMachineData.id = docIdToUpdate; 
+        updatedMachineData.motorTagNo = originalMotorTagNoFromForm;
+
+        try {
+            await setDoc(doc(db, "engines", docIdToUpdate), updatedMachineData); 
+            alert('Machine data updated successfully!');
+            
+            const index = engines.findIndex(e => e.firestoreDocId === docIdToUpdate);
+            if(index !== -1) {
+                engines[index] = { ...updatedMachineData, firestoreDocId: docIdToUpdate };
+            }
+            updateStatistics();
+            displayEngines(engines);
+
+            clearForm(); 
+        } catch (error) {
+            console.error("Error updating machine in Firestore: ", error);
+            alert('Error updating machine data. Check console.');
+        }
+    }
+    
+    window.populateFormForEdit = function(docId) {
+        if (!isAdmin) return;
+        const engineToEdit = engines.find(e => e.firestoreDocId === docId);
+        if (!engineToEdit) { alert("Machine data not found for editing."); return; }
+        currentEditingDocId = docId; 
+        machineFields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if (element) {
+                element.value = engineToEdit[field.id] !== undefined && engineToEdit[field.id] !== null ? engineToEdit[field.id] : '';
+                if (field.isId) { element.setAttribute('readonly', true); }
+            }
+        });
+        const submitBtn = document.getElementById('addOrUpdateEngineBtn');
+        if(submitBtn) submitBtn.textContent = 'Update Machine Data';
+        const adminFormEl = document.querySelector('#adminSection .admin-form');
+        if (adminFormEl) adminFormEl.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    window.clearForm = function() {
+        const form = document.querySelector('#adminSection .admin-form');
+        if (form) {
+            machineFields.forEach(field => {
+                const element = document.getElementById(field.id);
+                if (element) {
+                    element.value = (element.tagName === 'SELECT') ? 'Active' : '';
+                    if (field.isId) { element.removeAttribute('readonly'); }
+                }
+            });
+        }
+        const submitBtn = document.getElementById('addOrUpdateEngineBtn');
+        if(submitBtn) submitBtn.textContent = 'Add Machine Data';
+        currentEditingDocId = null; 
+    }
+
+    function displayEngines(engineList) {
+        const engineGrid = document.getElementById('engineGrid');
+        const noResults = document.getElementById('noResults');
+        engineGrid.innerHTML = ''; 
+        if (engineList.length === 0) {
+            noResults.textContent = document.getElementById('searchInput').value.trim() !== '' ? 'No machines found.' : 'No machines in inventory.';
+            noResults.style.display = 'block'; return;
+        }
+        noResults.style.display = 'none';
+        engineList.forEach(engine => {
+            const card = document.createElement('div'); card.className = 'engine-card';
+            const clickableArea = document.createElement('div'); clickableArea.className = 'engine-card-clickable-area';
+            if (!isAdmin) { clickableArea.onclick = () => showEngineDetails(engine.motorTagNo, engine.firestoreDocId); }
+            const motorTag = engine.motorTagNo || 'N/A';
+            const equipmentDescription = engine.equipmentDescription || 'N/A';
+            const swrNo = engine.swrNo || 'N/A';
+            const mcc = engine.mcc || 'N/A';
+            const mccLocation = engine.mccLocation || 'N/A';
+            const powerKw = engine.powerKw !== undefined && engine.powerKw !== null ? engine.powerKw + ' kW' : 'N/A';
+            const currentAmp = engine.currentAmp !== undefined && engine.currentAmp !== null ? engine.currentAmp + ' AMP' : 'N/A';
+            const voltage = engine.voltage || 'N/A';
+            const status = engine.status || 'N/A';
+            clickableArea.innerHTML = `<div class="engine-id">${motorTag}</div><div class="engine-description-area"><div class="info-label">Equipment Description</div><div class="info-value">${equipmentDescription}</div></div><div class="engine-info"><div class="info-item"><div class="info-label">SWR No.</div><div class="info-value">${swrNo}</div></div><div class="info-item"><div class="info-label">MCC</div><div class="info-value">${mcc}</div></div><div class="info-item"><div class="info-label">MCC Location</div><div class="info-value">${mccLocation}</div></div><div class="info-item"><div class="info-label">Power KW</div><div class="info-value">${powerKw}</div></div><div class="info-item"><div class="info-label">Current AMP</div><div class="info-value">${currentAmp}</div></div><div class="info-item"><div class="info-label">Voltage</div><div class="info-value">${voltage}</div></div><div class="info-item"><div class="info-label">Status</div><div class="info-value" style="color: ${getStatusColor(status)}">${status}</div></div></div>`;
+            card.appendChild(clickableArea);
+            if (isAdmin) {
+                const actionsDiv = document.createElement('div'); actionsDiv.className = 'engine-card-actions';
+                actionsDiv.innerHTML = `<button class="btn btn-secondary btn-small" onclick="showEngineDetails('${engine.motorTagNo}', '${engine.firestoreDocId}')">Details</button><button class="btn btn-info btn-small" onclick="populateFormForEdit('${engine.firestoreDocId}')">Edit</button><button class="btn btn-danger btn-small" onclick="promptDeleteMachine('${engine.motorTagNo}', '${engine.firestoreDocId}')">Delete</button>`;
+                card.appendChild(actionsDiv);
+            }
+            engineGrid.appendChild(card);
+        });
+    }
+    
+    window.promptDeleteMachine = function(motorTagNo, firestoreDocId) { 
+        if (!isAdmin) { alert("Access Denied."); return; }
+        if (confirm(`Are you sure you want to delete machine ${motorTagNo || firestoreDocId}? This cannot be undone.`)) {
+            deleteMachineFromDb(firestoreDocId); 
+        }
+    }
+    async function deleteMachineFromDb(docIdToDelete) {  
+        if (!isAdmin) { return; }  
+        try {
+            await deleteDoc(doc(db, "engines", docIdToDelete));
+            const index = engines.findIndex(e => e.firestoreDocId === docIdToDelete);
+            if(index > -1) engines.splice(index, 1);
+            updateStatistics();
+            displayEngines(engines);
+            alert('Machine deleted successfully!');
+        } catch (error) {
+            console.error("Error deleting from Firestore: ", error);
+            alert('Error deleting machine.');
+        }
+    }
+
+    window.promptDeleteAllData = async function() {
+        if (!isAdmin) { alert('Access denied.'); return; }
+        if (confirm("WARNING: Delete ALL machine data? Permanent. Sure?")) {
+            if (prompt("Confirm by typing DELETE ALL:") === "DELETE ALL") {
+                let statusDiv = document.getElementById('adminActionStatus') || document.createElement('div');
+                if(!statusDiv.id) {
+                    statusDiv.id = 'adminActionStatus';
+                    statusDiv.style.cssText = 'margin-top:10px; color:#ecf0f1; padding:10px; background:rgba(0,0,0,0.2); border-radius:5px; text-align:center;';
+                    const dangerZoneDiv = document.querySelector('#adminSection .admin-form div[style*="danger-zone"]');
+                    if(dangerZoneDiv && dangerZoneDiv.parentNode) dangerZoneDiv.parentNode.insertBefore(statusDiv, dangerZoneDiv.nextSibling);
+                    else document.querySelector('#adminSection .admin-form').appendChild(statusDiv);
+                }
+                if(statusDiv) statusDiv.textContent = "Deleting all data...";
+                await deleteAllDataFromFirestore(statusDiv);
+            } else { alert("Deletion cancelled. Mismatch."); }
+        } else { alert("Deletion cancelled."); }
+    }
+
+    async function deleteAllDataFromFirestore(statusDiv) {
+        try {
+            const querySnapshot = await getDocs(enginesCollectionRef);
+            if (querySnapshot.empty) { alert("No data to delete."); if(statusDiv) statusDiv.textContent = "No data to delete."; return; }
+            const deletePromises = querySnapshot.docs.map(d => deleteDoc(d.ref));
+            await Promise.all(deletePromises);
+            alert(`Deleted ${deletePromises.length} records.`);
+            if(statusDiv) statusDiv.textContent = `Deleted ${deletePromises.length} records.`;
+            engines = []; updateStatistics(); displayEngines([]);
+        } catch (error) {
+            console.error("Error deleting all data: ", error);
+            alert('Error deleting all. Check console.');
+            if(statusDiv) statusDiv.textContent = 'Error deleting all. Check console.';
+        }
+    }
+    
+    window.handleCsvImport = async function() { 
+        if (!isAdmin) { alert('Access denied.'); return; }
+        const fileInput = document.getElementById('csvFileInput');
+        const importStatusDiv = document.getElementById('importStatus');
+        importStatusDiv.textContent = ''; 
+        if (!fileInput.files || fileInput.files.length === 0) { alert('Please select CSV.'); return; }
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        function parseCsvRowAdvanced(rowString) {
+            const result = []; let currentField = ''; let inQuotes = false;
+            for (let i = 0; i < rowString.length; i++) {
+                const char = rowString[i];
+                if (char === '"') {
+                    if (inQuotes && i + 1 < rowString.length && rowString[i+1] === '"') { currentField += '"'; i++; } 
+                    else { inQuotes = !inQuotes; }
+                } else if (char === ',' && !inQuotes) { result.push(currentField); currentField = ''; } 
+                else { currentField += char; }
+            }
+            result.push(currentField); return result.map(field => field.trim()); 
+        }
+
+        reader.onload = async function(event) {
+            const csvData = event.target.result;
+            const lines = csvData.split(/\r\n|\n/);
+            if (lines.length <= 1) { alert('CSV empty/header only.'); importStatusDiv.textContent = 'Import failed.'; return; }
+            const dataRows = lines.slice(1).filter(line => line.trim() !== '');
+            let successfullyImportedCount = 0, failedImportCount = 0;
+            const errors = [];
+            let newRecords = [];
+            importStatusDiv.textContent = `Starting import of ${dataRows.length} records...`;
+            const existingSanitizedIds = new Set(engines.map(e => e.firestoreDocId));
+
+            for (let i = 0; i < dataRows.length; i++) {
+                const rowString = dataRows[i];
+                const values = parseCsvRowAdvanced(rowString);
+                if (values.length !== machineFields.length) {
+                    errors.push(`Row ${i + 2}: Column count mismatch. Expected ${machineFields.length}, got ${values.length}.`); failedImportCount++; continue;
+                }
+                const newMachineData = {}; let validRow = true; 
+                let originalMotorTagNoFromCsv = ''; let sanitizedIdFromCsv = '';
+                machineFields.forEach((field, index) => {
+                    const value = values[index];
+                    if (field.isId) { 
+                        originalMotorTagNoFromCsv = value;
+                        if (!value) { errors.push(`Row ${i + 2}: '${field.header}' missing.`); validRow = false; }
+                        else {
+                            sanitizedIdFromCsv = sanitizeForFirestoreId(originalMotorTagNoFromCsv);
+                            if (existingSanitizedIds.has(sanitizedIdFromCsv)) { errors.push(`Row ${i + 2}: ID '${originalMotorTagNoFromCsv}' already exists.`); validRow = false; }
+                        }
+                        newMachineData.motorTagNo = originalMotorTagNoFromCsv; 
+                    } else if (field.type === 'number' && value) {
+                        newMachineData[field.id] = parseFloat(value) || null;
+                    } else { newMachineData[field.id] = value; }
+                });
+
+                if (!validRow) { failedImportCount++; continue; }
+                newMachineData.id = sanitizedIdFromCsv; 
+                try {
+                    await setDoc(doc(db, "engines", sanitizedIdFromCsv), newMachineData);
+                    successfullyImportedCount++;
+                    existingSanitizedIds.add(sanitizedIdFromCsv); 
+                    newRecords.push({ ...newMachineData, firestoreDocId: sanitizedIdFromCsv });
+                } catch (error) {
+                    errors.push(`Row ${i + 2} (ID: ${originalMotorTagNoFromCsv}): Save error - ${error.message}.`); failedImportCount++;
+                    console.error(`Error saving imported machine ${originalMotorTagNoFromCsv}:`, error);
+                }
+            }
+            
+            if (newRecords.length > 0) {
+                engines.push(...newRecords);
+                updateStatistics();
+                displayEngines(engines);
+            }
+
+            let finalMessage = `Import: ${successfullyImportedCount} success, ${failedImportCount} fail.`;
+            if (errors.length > 0) { finalMessage += "\nSee console for errors."; console.warn("CSV Import Errors:", errors); }
+            importStatusDiv.textContent = finalMessage; alert(finalMessage);
+            if (fileInput) fileInput.value = ''; 
+        };
+        reader.onerror = () => { alert('File read failed.'); importStatusDiv.textContent = 'Import failed: File read error.';};
+        reader.readAsText(file);
+    }
+
+    window.logout = function() { 
+        document.getElementById('mainApp').classList.add('hidden');
+        if (managerControlPanel) managerControlPanel.classList.add('hidden');
+        if (userManagementBtn) userManagementBtn.classList.add('hidden');
+        document.getElementById('loginScreen').classList.remove('hidden');
+        if (loginBackgroundSlideshow) loginBackgroundSlideshow.classList.remove('hidden');
+        document.body.style.background = '';  
+        document.getElementById('username').value = ''; document.getElementById('password').value = '';
+        currentUser = ''; isAdmin = false; isManager = false; currentEditingDocId = null;
+        engines = []; updateStatistics(); displayEngines([]);  
+    }
+
+    document.addEventListener('DOMContentLoaded', function() { 
+        const loginScreenElement = document.getElementById('loginScreen');
+        if (loginScreenElement) {
+            loginScreenElement.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !loginScreenElement.classList.contains('hidden')) {
+                    const activeEl = document.activeElement;
+                    if ((activeEl.tagName === 'INPUT' || activeEl.tagName === 'BUTTON') && loginScreenElement.contains(activeEl)) login();
+                }
+            });
+        }
+        const engineModalElement = document.getElementById('engineModal');
+        if (engineModalElement) engineModalElement.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && engineModalElement && !engineModalElement.classList.contains('hidden')) closeModal();
+        });
+        if (loginScreenElement && !loginScreenElement.classList.contains('hidden') && loginBackgroundSlideshow) {
+            loginBackgroundSlideshow.classList.remove('hidden'); document.body.style.background = 'transparent';
+        } else if (loginBackgroundSlideshow) {
+            loginBackgroundSlideshow.classList.add('hidden');
+        }
+    });
+</script>
+</body>
+</html>
