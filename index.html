@@ -223,6 +223,20 @@
     /* A shadow gives the panel depth and makes it feel like it's floating */
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
+
+/* --- STYLE ADDED FOR THE FOOTER --- */
+.page-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    color: rgba(236, 240, 241, 0.6);
+    font-size: 14px;
+    z-index: 2;
+    pointer-events: none; /* So it doesn't interfere with clicks */
+}
+
 </style>
 </head>
 <body>
@@ -320,6 +334,10 @@
         <div id="modalContent" style="display: grid; gap: 10px;"></div>
     </div>
 </div>
+
+<footer id="loginFooter" class="page-footer">
+    Designed by Eng.Abdallah Dmour &amp; Data Gathered by Abdallah Mansour
+</footer>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -449,6 +467,7 @@
 
     async function showMainApp() {
         document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('loginFooter').classList.add('hidden'); // --- JAVASCRIPT CHANGE: HIDE FOOTER
         if (loginBackgroundSlideshow) loginBackgroundSlideshow.classList.add('hidden');
         document.getElementById('mainApp').classList.remove('hidden');
         document.body.style.background = 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)';
@@ -548,10 +567,10 @@
         searchFieldSelect.innerHTML = '<option value="all">All Fields</option>'; 
         machineFields.forEach(field => {
             if (field.type === 'text' || field.type === 'textarea' || field.id === 'status' || field.isId) {
-                 const option = document.createElement('option');
-                 option.value = field.id;
-                 option.textContent = field.header;
-                 searchFieldSelect.appendChild(option);
+                const option = document.createElement('option');
+                option.value = field.id;
+                option.textContent = field.header;
+                searchFieldSelect.appendChild(option);
             }
         });
     }
@@ -577,13 +596,13 @@
     }
 
     function getStatusColor(status) { 
-         switch(status) { case 'Active': return '#27ae60'; case 'Maintenance': return '#f39c12'; case 'Inactive': return '#e74c3c'; default: return '#7f8c8d'; }
+        switch(status) { case 'Active': return '#27ae60'; case 'Maintenance': return '#f39c12'; case 'Inactive': return '#e74c3c'; default: return '#7f8c8d'; }
     }
     function formatModalItem(label, value) { 
         if (value === undefined || value === null || String(value).trim() === '') return '';
-         if (label.toLowerCase() === 'status') {
-             return `<div class="info-item"><div class="info-label">${label}</div><div class="info-value" style="color: ${getStatusColor(value)}">${String(value)}</div></div>`;
-         }
+        if (label.toLowerCase() === 'status') {
+            return `<div class="info-item"><div class="info-label">${label}</div><div class="info-value" style="color: ${getStatusColor(value)}">${String(value)}</div></div>`;
+        }
         return `<div class="info-item"><div class="info-label">${label}</div><div class="info-value">${String(value).replace(/\n/g, '<br>')}</div></div>`;
     }
 
@@ -653,7 +672,7 @@
         const originalMotorTagNoFromForm = document.getElementById('motorTagNo').value.trim();
         machineFields.forEach(field => {
             const element = document.getElementById(field.id);
-             if(element){
+            if(element){
                 const value = element.value.trim();
                 updatedMachineData[field.id] = (field.type === 'number') ? (parseFloat(value) || null) : value;
             }
@@ -890,6 +909,7 @@
         if (managerControlPanel) managerControlPanel.classList.add('hidden');
         if (userManagementBtn) userManagementBtn.classList.add('hidden');
         document.getElementById('loginScreen').classList.remove('hidden');
+        document.getElementById('loginFooter').classList.remove('hidden'); // --- JAVASCRIPT CHANGE: SHOW FOOTER
         if (loginBackgroundSlideshow) loginBackgroundSlideshow.classList.remove('hidden');
         document.body.style.background = '';  
         document.getElementById('username').value = ''; document.getElementById('password').value = '';
